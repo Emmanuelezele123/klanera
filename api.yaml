@@ -1,0 +1,106 @@
+openapi: "3.0.0"
+host: localhost:3000
+info: 
+ title: KLANERA API
+ description: API FOR KLANERA
+ version: 1.0.0
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+ /user/signup:
+  post:
+   summary: Create a new user
+   tags:
+    - Authentication
+   produces: 
+    - application/json
+   consumes:
+    - application/json
+   parameters:
+   - in: body
+     name: User
+     schema:
+      $ref: "#/components/schemas/User"
+      
+   responses:
+    200:
+     description: User created
+     schema:
+      type: object
+      properties: 
+       success:
+        type: boolean
+        example: true
+       message:
+        type: string
+        example: "message"
+       token:
+        type: string
+        example: "token"
+      
+    401:
+     description: User was not created
+    500:
+     description: User was not created too
+
+ /user/login:
+  post:
+   summary: Login a user
+   tags:
+    - Authentication
+   produces: 
+    - application/json
+   consumes:
+    - application/json
+   parameters:
+   - in: body
+     name: User
+     schema:
+      type: object
+      properties: 
+       username:
+        type: string
+       password:
+        type: string
+      
+   responses:
+    200:
+     description: User Logged in
+     schema:
+      type: object
+      properties: 
+       success:
+        type: boolean
+        example: true
+       message:
+        type: string
+        example: "message"
+       token:
+        type: string
+        example: "token"
+      
+    401:
+     description: Login error
+     schema:
+      type: object
+      properties: 
+       message:
+        type: string
+        example: "message"
+      
+       
+    500:
+     description: Login error
+     schema:
+      type: object
+      properties: 
+       message:
+        type: string
+        example: "message"
+
+ 
+ 
