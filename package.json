@@ -14,7 +14,6 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "build": "ts-node-dev --respawn --transpile-only src/app.ts",
     "start": "ts-node-dev --respawn --transpile-only src/app.ts"
   },
   "dependencies": {

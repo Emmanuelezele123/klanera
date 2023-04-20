@@ -15,7 +15,7 @@ const connectDB = (app:Application) => {
     .connect(MONGO_URI!, options)
     .then(() => {
       app.listen(process.env.PORT || 3000, () => {
-        console.log('XNODE APP is running on');
+        console.log('klanera APP is running on');
       });
     })
     .catch((err: Error) => {
