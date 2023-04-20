@@ -14,8 +14,8 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "build": "tsc",
-    "start": "node ./src/app.js"
+    "build": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "start": "ts-node-dev --respawn --transpile-only src/app.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -29,6 +29,7 @@
     "nodemailer": "^6.9.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2",
+    "ts-node": "^10.9.1",
     "yamljs": "^0.3.0"
   }
 }
