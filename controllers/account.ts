@@ -15,7 +15,7 @@ exports.sendVerification = async(req: Request, res: Response) => {
         }
     
         const token = createToken(foundUser)
-        const link = `${process.env.BASE_URL}/account/verifyEmail/${token}`;
+        const link = `${process.env.NBASE_URL}/account/verifyEmail/${token}`;
      
         sendEmail(foundUser.email, "Email Verification", link, res, "verify_email")
 
