@@ -1,51 +1,39 @@
-const nodemailer = require("nodemailer");
-require('dotenv').config
-const { google } = require('googleapis');
+// using Twilio SendGrid's v3 Node.js Library
+const sgMail = require('@sendgrid/mail');
+require("dotenv").config();
 
-const CLIENT_EMAIL = process.env.MAIL; //your email from where you'll be sending emails to users
-const CLIENT_ID = process.env.EMAIL_CLIENT_ID; // Client ID generated on Google console cloud
-const CLIENT_SECRET = process.env.EMAIL_CLIENT_SECRET; // Client SECRET generated on Google console cloud
-const REDIRECT_URI = process.env.EMAIL_CLIENT_REDIRECT_URI; // The OAuth2 server (playground)
-const REFRESH_TOKEN = process.env.EMAIL_REFRESH_TOKEN; // The refreshToken we got from the the OAuth2 playground
+const sendEmail = (email: string, subject: string, text: string, res: any, type: string) => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+  const message = {
+    to: email, // Change to your recipient
+    from: 'emmanuel.ezele@stu.cu.edu.ng', // Change to your verified sender
+    subject: subject,
+    text: text,
+  };
 
-const OAuth2Client = new google.auth.OAuth2(
-    CLIENT_ID,
-    CLIENT_SECRET,
-    REDIRECT_URI,
-  );
+  sgMail
+    .send(message)
+    .then(() => {
+      if (type === "email") {
+        console.log('Email sent');
+        return res.status(200).json({ status: "Success", message: "password reset link sent to your email account" });
 
-OAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+      } else {
+        return res.status(200).json({ status: "Success", message: "send verification email" });
+      }
 
+    })
+    .catch((error: any) => {
+      if (type === "email") {
+        console.error(error);
+        return res.status(401).json({ status: "Failure", message: "password reset link was not sent" });
 
-const sendEmail = async (email:String, subject:String, text:String) => {
-  
-    const accessToken = await OAuth2Client.getAccessToken();
-    try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              
-                type: 'OAuth2',
-                user: CLIENT_EMAIL,
-                clientId: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                refreshToken: REFRESH_TOKEN,
-                accessToken: accessToken,
-
-            }
-        });
-
-        await transporter.sendMail({
-            from: CLIENT_EMAIL,
-            to: email,
-            subject: subject,
-            text: text,
-        });
-
-        
-    } catch (error) {
-    }
+      } else {
+        console.error(error);
+        return res.status(401).json({ status: "Failure", message: "email veriication not sent" });
+      }
+    });
 };
 
 module.exports = sendEmail;

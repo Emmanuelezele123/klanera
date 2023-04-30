@@ -4,9 +4,9 @@ const AccountController = require("../controllers/account");
 
 
 Accountrouter.post('/sendVerification', AccountController.sendVerification)
-Accountrouter.post('/verifyEmail', AccountController.verifyEmail)
+Accountrouter.post('/verifyEmail/:token', AccountController.verifyEmail)
 Accountrouter.post('/passwordReset', AccountController.resetPassword)
-Accountrouter.post('/passwordReset/:userId/:token', AccountController.changePassword)
+Accountrouter.post('/passwordReset/:token', AccountController.changePassword)
 
 
 module.exports = Accountrouter
