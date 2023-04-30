@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "f3406477-21ec-4a3f-a3af-5acbb6470524",
+		"name": "KLANERA API",
+		"description": "API FOR KLANERA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Create a new user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{baseUrl}}/user/signup"
+					},
+					"response": [
+						{
+							"name": "Create a new user - sucesss",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"wade\",\r\n    \"email\": \"wade@yahoo.com\",\r\n    \"password\": \"wade\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{baseUrl}}/user/signup"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "290"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"122-TzEL0nFKgIhGKXJs9uuZezN3Lec\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Apr 2023 22:37:51 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"New klanera user added\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDFiZWJmMTFjYzQxZGUyY2QzYzczMyIsInVzZXJuYW1lIjoid2FkZSIsImVtYWlsIjoid2FkZUB5YWhvby5jb20iLCJpYXQiOjE2ODIwMzAyNzEsImV4cCI6MTk5NzM5MDI3MX0.fuPuPu2oxr9BolKTD5mtv2fwg_zLKrQp18jgKtXj8-M\"\n}"
+						},
+						{
+							"name": "Create a new user - username already exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"username\":\"ewade\",\r\n  \"email\":\"jwade@yahoo.com\",\r\n  \"password\":\"wade\"\r\n \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{baseUrl}}/user/signup"
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "54"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"36-7SIMblKlkDbYjAjgINFjnCqHs3c\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Apr 2023 22:41:16 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"a user with this username already exists\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Login a user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"nmaezele@yahoo.com\",\r\n    \"password\": \"nmaezelje\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/user/login"
+					},
+					"response": [
+						{
+							"name": "Login a user - success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"nmaezele@yahoo.com\",\r\n    \"password\": \"nmaezele\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{baseUrl}}/user/login"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "294"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"126-KaMpxY74qKOoO6K8gom7DmMi8rs\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Apr 2023 22:42:36 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"klanera USER LOGGED IN\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDFiYjYwMTFjYzQxZGUyY2QzYzcyYyIsInVzZXJuYW1lIjoibm1hIiwiZW1haWwiOiJubWFlemVsZUB5YWhvby5jb20iLCJpYXQiOjE2ODIwMzA1NTYsImV4cCI6MTk5NzM5MDU1Nn0.AKl9LPdFzhXP-9jkQfH4IVw2KIA0yM5oyDsmk5OSoMU\"\n}"
+						},
+						{
+							"name": "Login a user -incoorect passowrd",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"nmaezele@yahoo.com\",\r\n    \"password\": \"nmaezelee\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{baseUrl}}/user/login"
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "32"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"20-6TC2siujKjb4Sye7f7qJOBZ/udc\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 21 Apr 2023 19:56:12 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"incorrect password\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://klanera.herokuapp.com",
+			"type": "string"
+		}
+	]
+}

@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt')
 const sendEmail = require('../helpers/sendEmail')
 require("dotenv").config()
 const expiryDate = process.env.EXPIRY_DATE
-const { createToken } = require('../helpers/jwtService')
+const { createToken,createAccessToken,createRefreshToken } = require('../helpers/jwtService')
 
 exports.registerNewUser = async (req: Request, res: Response) => {
     try {
@@ -17,7 +17,8 @@ exports.registerNewUser = async (req: Request, res: Response) => {
         const newUser = await User.create({
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            verified: "false"
         })
 
         const salt = await bcrypt.genSalt(10)
@@ -45,22 +46,32 @@ exports.loginUser = async (req: Request, res: Response) => {
     try {
         const foundUser = await User.findOne({ email: req.body.email })
         if (!foundUser) {
-            return res.status(401).json({ message: "Email Address not found" })
+          return res.status(401).json({ message: "Email Address not found" })
         }
         const match = bcrypt.compareSync(req.body.password, foundUser.password)
         if (!match) {
-            return res.status(401).json({ message: "incorrect password" })
+          return res.status(401).json({ message: "incorrect password" })
         }
-        const token = createToken(foundUser)
-        if (!token) {
-            return res.status(500).json({ message: "sorry, we could not authenticate you, please login" })
+        const accessToken = createAccessToken(foundUser)
+        const refreshToken = createRefreshToken(foundUser)
+      
+        if (!accessToken || !refreshToken) {
+          return res.status(500).json({ message: "sorry, we could not authenticate you, please login" })
         }
+      
+        // Store the refresh token in the user's database record
+        foundUser.refreshToken = refreshToken
+        await foundUser.save()
+      
         return res.status(200).json({
-            success: true,
-            message: "klanera USER LOGGED IN",
-            token: token
+          success: true,
+          message: "klanera USER LOGGED IN",
+          user: foundUser,
+          accessToken: accessToken,
+          refreshToken: refreshToken
         })
-    } catch (err) {
+      } catch (err) {
         return res.status(500).json({ err })
-    }
+      }
+      
 }

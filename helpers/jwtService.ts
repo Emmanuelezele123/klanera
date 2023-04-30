@@ -2,6 +2,8 @@ require("dotenv").config()
 const jwt = require('jsonwebtoken')
 const secret = process.env.SECRET
 const expiryDate = process.env.EXPIRY_DATE
+const ACCESS_TOKEN_EXPIRATION_TIME = '15m'
+const REFRESH_TOKEN_EXPIRATION_TIME = '7d'
 exports.createToken = (user:any) => {
     try {
         let token = jwt.sign({
@@ -16,7 +18,23 @@ exports.createToken = (user:any) => {
     }
 }
 
-
+exports.createAccessToken = (user: any): any => {
+    const payload = {
+        id: user._id,
+        username: user.username,
+        email:user.email
+    }
+    return jwt.sign(payload, secret, { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME })
+  }
+  
+  exports.createRefreshToken = (user:any): any => {
+    const payload = {
+        id: user._id,
+        username: user.username,
+        email:user.email
+    }
+    return jwt.sign(payload, secret, { expiresIn: REFRESH_TOKEN_EXPIRATION_TIME })
+  }
 
 
 
