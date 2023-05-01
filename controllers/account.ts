@@ -1,49 +1,66 @@
 const User = require('../models/user')
 import express, { Application, Request, Response, NextFunction } from "express";
 const sendEmail = require('../helpers/sendEmail')
+
+const Otp = require('../models/otp')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 require("dotenv").config()
 const expiryDate = process.env.EXPIRY_DATE
 const { createToken,decodeToken } = require('../helpers/jwtService')
 
-exports.sendVerification = async(req: Request, res: Response) => {
+exports.resendOtp = async(req: Request, res: Response) => {
     try {
-        const foundUser = await User.findOne({ email: req.body.email })
-        if (!foundUser) {
-          return res.status(404).json({ message: 'User not found' })
-        }
-    
-        const token = createToken(foundUser)
-        const link = `${process.env.NBASE_URL}/account/verifyEmail/${token}`;
-     
-        sendEmail(foundUser.email, "Email Verification", link, res, "verify_email")
+        const user = await User.findOne({ email:req.body.email }).select('_id');
 
-        return res.status(200).json({ message: 'Email sent successfully' })
-      } catch (err) {
-        console.error(err)
-        return res.status(500).json({ message: 'Internal server error' })
+    if (!user) {
+     return res.status(404).json({ message: 'User not found with '+req.body.email });
+      
+    }
+    const userId: string = user._id.toString();
+
+
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const newOtp = new Otp({
+          userId: userId,
+          otpText: otp
+        });
+        const result = await newOtp.save();
+        sendEmail(req.body.email, "Otp verification Code for Klanera app ", `Your verification code is ${otp}`, res, "code");
+      } catch (err:any) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
       }
+
     }
 
-exports.verifyEmail = async(req: Request, res: Response) => {
-    try {
-        // Verify the email verification token
-        const decodedToken = decodeToken(req.params.token)
-        const foundUser = await User.findById(decodedToken.id)
-        if (!foundUser) {
-          return res.status(404).json({ message: 'User not found' })
-        }
-    
-        // Update the user's email verification status
-        foundUser.verified = "true"
-        await foundUser.save()
-    
-        return res.status(200).json({ message: 'Email verified successfully' })
-      } catch (err) {
-        console.error(err)
-        return res.status(500).json({ message: 'Internal server error' })
-      }
+exports.verifyOtp = async(req: Request, res: Response) => {
+    const otp = req.body.otp;
+    const email = req.body.email;
+  try {   
+    const user = await User.findOne({ email:req.body.email }).select('_id');
+
+    if (!user) {
+     return res.status(404).json({ message: 'User not found' });
+      
+    }
+    const userId: string = user._id.toString();
+
+    const otps = await Otp.findOne({ userId: userId ,otpText :otp });
+
+     if (otps) {
+    await Otp.deleteMany({ userId: userId });
+    user.verified = "true"
+    await user.save()
+    return res.status(200).json({ message: "Your account has been verified" });
+  } else {
+    return res.status(401).json({ message: "Invalid Otp" });
+  }
+  } catch(err:any) {
+    console.log(err.message);
+    console.error(err);
+    return res.json({ Error: err.message });
+  }
 }
 exports.resetPassword= async(req: Request, res: Response) => {
     try {

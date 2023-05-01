@@ -20,7 +20,7 @@ const sendEmail = (email: string, subject: string, text: string, res: any, type:
         return res.status(200).json({ status: "Success", message: "password reset link sent to your email account" });
 
       } else {
-        return res.status(200).json({ status: "Success", message: "send verification email" });
+        return res.status(200).json({ status: "Success" });
       }
 
     })
@@ -30,9 +30,8 @@ const sendEmail = (email: string, subject: string, text: string, res: any, type:
         return res.status(401).json({ status: "Failure", message: "password reset link was not sent" });
 
       } else {
-        console.error(error);
-        return res.status(401).json({ status: "Failure", message: "email veriication not sent" });
-      }
+       
+    }
     });
 };
 
