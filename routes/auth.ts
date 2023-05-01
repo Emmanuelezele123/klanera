@@ -8,6 +8,8 @@ const AuthController = require("../controllers/auth");
 
 router.post('/login', AuthController.loginUser)
 
+router.post('/refreshTokens', AuthController.refreshTokens)
+
 
 
 module.exports = router

@@ -7,7 +7,7 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 require("dotenv").config()
 const expiryDate = process.env.EXPIRY_DATE
-const { createToken,decodeToken } = require('../helpers/jwtService')
+const { createToken,createAccessToken,createRefreshToken,decodeToken,generateToken } = require('../helpers/jwtService')
 
 exports.resendOtp = async(req: Request, res: Response) => {
     try {
@@ -52,8 +52,30 @@ exports.verifyOtp = async(req: Request, res: Response) => {
     await Otp.deleteMany({ userId: userId });
     user.verified = "true"
     await user.save()
-    return res.status(200).json({ message: "Your account has been verified" });
-  } else {
+
+    const accessToken = createAccessToken(user);
+    const refreshToken = createRefreshToken(user);
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    const cookieOptions:any = {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'strict',
+    };
+    res.cookie('refreshToken', refreshToken, cookieOptions);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Pin Correct !! Your account has been verified ',
+      user,
+      accessToken,
+    });
+
+
+
+      } else {
     return res.status(401).json({ message: "Invalid Otp" });
   }
   } catch(err:any) {
@@ -70,7 +92,7 @@ exports.resetPassword= async(req: Request, res: Response) => {
         }
     
         // Generate a password reset token and set it on the user's account
-        const passwordResetToken = bcrypt.genSaltSync(10)
+        const passwordResetToken = generateToken()
         foundUser.passwordResetToken = passwordResetToken
         foundUser.passwordResetTokenExpiration = new Date(Date.now() + 3600000) // 1 hour from now
         await foundUser.save()

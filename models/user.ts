@@ -32,7 +32,7 @@ const userSchema = new Schema({
 
 
   },
-  accessToken: 
+  refreshToken: 
   { type: String, 
     select: false
    },

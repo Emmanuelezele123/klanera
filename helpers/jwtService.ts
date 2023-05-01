@@ -1,5 +1,6 @@
 require("dotenv").config()
 const jwt = require('jsonwebtoken')
+const cryptos = require('crypto')
 const secret = process.env.SECRET
 const expiryDate = process.env.EXPIRY_DATE
 const ACCESS_TOKEN_EXPIRATION_TIME = '15m'
@@ -47,3 +48,13 @@ exports.decodeToken = (token:any) => {
         return null
     }
 }
+
+exports.generateToken=() => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let token = '';
+    do {
+      token += cryptos.randomBytes(1).toString('hex');
+    } while (token.length < 20);
+  
+    return token.split('').map(c => chars[Math.floor(chars.length * (parseInt(c, 16) / 16))]).join('');
+  }

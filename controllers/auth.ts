@@ -73,7 +73,7 @@ exports.loginUser = async (req: Request, res: Response) => {
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
-    user.accessToken = refreshToken;
+    user.refreshToken = refreshToken;
     await user.save();
 
     const cookieOptions:any = {
@@ -96,5 +96,31 @@ exports.loginUser = async (req: Request, res: Response) => {
 }
 
 exports.refreshTokens = async (req: Request, res: Response) => {
+  try {
+    const refreshToken = req.cookies.refreshToken; 
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Unauthorized" })
+    }
 
+    let decodedToken = decodeToken(refreshToken)
+    // check if token is valid
+    if (!decodedToken) {
+      return res.status(402).json({ message: "empty token" })
+    } 
+
+    const user = await User.findById(decodedToken.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(401).json({ message: "no user found with this token" })
+    }
+    const newRefreshToken = createRefreshToken(user);
+    const accessToken = createAccessToken(user);
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+    res.json({ accessToken });
+  } catch (err:any) {
+    console.log(err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }
