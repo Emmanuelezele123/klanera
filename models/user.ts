@@ -33,8 +33,7 @@ const userSchema = new Schema({
 
   },
   refreshToken: 
-  { type: String, 
-    select: false
+  { type: String
    },
 
    passwordResetToken: String,

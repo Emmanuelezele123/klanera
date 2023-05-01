@@ -97,7 +97,7 @@ exports.loginUser = async (req: Request, res: Response) => {
 
 exports.refreshTokens = async (req: Request, res: Response) => {
   try {
-    const refreshToken = req.cookies.refreshToken; 
+    const refreshToken = req.cookies["refreshToken"]; 
     if (!refreshToken) {
       return res.status(401).json({ message: "Unauthorized" })
     }
@@ -107,8 +107,9 @@ exports.refreshTokens = async (req: Request, res: Response) => {
     if (!decodedToken) {
       return res.status(402).json({ message: "empty token" })
     } 
-
-    const user = await User.findById(decodedToken.id);
+   
+    const user = await User.findById(decodedToken.id).lean(false);
+  
     if (!user || user.refreshToken !== refreshToken) {
       return res.status(401).json({ message: "no user found with this token" })
     }
