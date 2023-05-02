@@ -38,7 +38,7 @@ exports.verifyOtp = async(req: Request, res: Response) => {
     const otp = req.body.otp;
     const email = req.body.email;
   try {   
-    const user = await User.findOne({ email:req.body.email }).select('_id');
+    const user = await User.findOne({ email:req.body.email });
 
     if (!user) {
      return res.status(404).json({ message: 'User not found' });
@@ -65,11 +65,16 @@ exports.verifyOtp = async(req: Request, res: Response) => {
       sameSite: 'strict',
     };
     res.cookie('refreshToken', refreshToken, cookieOptions);
-
+const returnedUser = {
+  id : user._id,
+  username : user.username,
+  email : user.email,
+  verified: user.verified
+}
     return res.status(200).json({
       success: true,
       message: 'Pin Correct !! Your account has been verified ',
-      user,
+      returnedUser,
       accessToken,
     });
 

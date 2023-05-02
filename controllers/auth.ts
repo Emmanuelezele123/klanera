@@ -83,10 +83,19 @@ exports.loginUser = async (req: Request, res: Response) => {
     };
     res.cookie('refreshToken', refreshToken, cookieOptions);
 
+    
+const returnedUser = {
+  id : user._id,
+  username : user.username,
+  email : user.email,
+  verified: user.verified
+}
+    
+
     return res.status(200).json({
       success: true,
       message: 'User logged in successfully',
-      user,
+      returnedUser,
       accessToken,
     });
   } catch (error) {
@@ -119,7 +128,19 @@ exports.refreshTokens = async (req: Request, res: Response) => {
     await user.save();
 
     res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
-    res.json({ accessToken });
+    const returnedUser = {
+      id : user._id,
+      username : user.username,
+      email : user.email,
+      verified: user.verified
+    }
+        return res.status(200).json({
+          success: true,
+          message: 'Token refreshed ',
+          returnedUser,
+          accessToken,
+        });
+  
   } catch (err:any) {
     console.log(err.message);
     res.status(500).json({ message: "Internal Server Error" });
