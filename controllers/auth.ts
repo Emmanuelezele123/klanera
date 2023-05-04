@@ -10,14 +10,13 @@ const { createToken,createAccessToken,createRefreshToken,decodeToken } = require
 
 exports.registerNewUser = async (req: Request, res: Response) => {
     try {
-        const existingUser = await User.findOne({ username: req.body.username })
-        if (existingUser) {
-            return res.status(400).json({ message: 'a user with this username already exists' })
+        const existingEmail = await User.findOne({ email: req.body.email})
+        if (existingEmail) {
+            return res.status(400).json({ message: 'a user with this email already exists' })
         }
 
         const newUser = await User.create({
             email: req.body.email,
-            username: req.body.username,
             password: req.body.password,
             verified: "false"
         })
