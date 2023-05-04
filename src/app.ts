@@ -12,6 +12,16 @@ const app:Application = express()
 app.use(cors())      
 app.use(express.json()) 
 app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+    origin: [
+      "https://klanera.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ],
+  }),
+);
 app.use("/user",authRouter)
 app.use("/account",accountRouter)
 // Root route of express app
