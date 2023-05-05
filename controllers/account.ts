@@ -69,7 +69,8 @@ const returnedUser = {
   id : user._id,
   username : user.username,
   email : user.email,
-  verified: user.verified
+  verified: user.verified,
+  profileCompleted:user.profileCompleted
 }
     return res.status(200).json({
       success: true,

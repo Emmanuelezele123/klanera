@@ -32,6 +32,9 @@ const userSchema = new Schema({
   refreshToken: 
   { type: String
    },
+   profileCompleted:{
+    type:String
+  },
 
    passwordResetToken: String,
    passwordResetTokenExpiration: Date

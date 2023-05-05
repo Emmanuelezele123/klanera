@@ -18,7 +18,8 @@ exports.registerNewUser = async (req: Request, res: Response) => {
         const newUser = await User.create({
             email: req.body.email,
             password: req.body.password,
-            verified: "false"
+            verified: "false",
+            profileCompleted: "false",
         })
 
         const salt = await bcrypt.genSalt(10)
@@ -87,7 +88,8 @@ const returnedUser = {
   id : user._id,
   username : user.username,
   email : user.email,
-  verified: user.verified
+  verified: user.verified,
+  profileCompleted:user.profileCompleted
 }
     
 
@@ -131,7 +133,8 @@ exports.refreshTokens = async (req: Request, res: Response) => {
       id : user._id,
       username : user.username,
       email : user.email,
-      verified: user.verified
+      verified: user.verified,
+      profileCompleted:user.profileCompleted
     }
         return res.status(200).json({
           success: true,
