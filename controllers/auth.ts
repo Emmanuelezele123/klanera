@@ -9,51 +9,46 @@ const expiryDate = process.env.EXPIRY_DATE
 const { createToken,createAccessToken,createRefreshToken,decodeToken } = require('../helpers/jwtService')
 
 exports.registerNewUser = async (req: Request, res: Response) => {
+  try {
+    const existingEmail = await User.findOne({ email: req.body.email })
+    if (existingEmail) {
+        return res.status(400).json({ message: 'a user with this email already exists' })
+    }
+    const newUser = await User.create({
+        email: req.body.email,
+        password: req.body.password,
+        verified: "false",
+        profileCompleted: "false",
+    })
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(req.body.password, salt)
+    newUser.password = hashedPassword
+
+    const savedUser = await newUser.save()
+
+    const token = createToken(savedUser)
+    if (!token) {
+        return res.status(500).json({ message: "sorry, we could not authenticate you, please login" })
+    }
+
     try {
-        const existingEmail = await User.findOne({ email: req.body.email})
-        if (existingEmail) {
-            return res.status(400).json({ message: 'a user with this email already exists' })
-        }
-
-        const newUser = await User.create({
-            email: req.body.email,
-            password: req.body.password,
-            verified: "false",
-            profileCompleted: "false",
-        })
-
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(req.body.password, salt)
-        newUser.password = hashedPassword
-
-        const savedUser = await newUser.save()
-
-        const token = createToken(savedUser)
-        if (!token) {
-            return res.status(500).json({ message: "sorry, we could not authenticate you, please login" })
-        }
-
-
-        try {
-          const otp = Math.floor(1000 + Math.random() * 9000).toString();
-          const newOtp = new Otp({
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const newOtp = new Otp({
             userId: newUser._id,
             otpText: otp
-          });
-          const result = await newOtp.save();
-          sendEmail(newUser.email, "Otp verification Code for klanera app ", `Your verification code is ${otp}`, res, "code");
-        } catch (err:any) {
-          console.error(err);
-          return res.status(500).json({ error: err.message });
-        }
-
-        return res.status(200).json({ status: "Success", message: "New klanera user added" });
-    
-
-       
-    } catch (err) {
-        return res.status(500).json({ err })
+        });
+        const result = await newOtp.save();
+        sendEmail(newUser.email, "Otp verification Code for klanera app ", `Your verification code is ${otp}`, res, "code");
+    } catch (err:any) {
+        console.error(err);
+        return res.status(500).json({ error: err.message });
     }
+
+    return res.status(200).json({ status: "Success", message: "New klanera user added" });
+} catch (err:any) {
+    return res.status(500).json({ error: err.message })
+}
+
 }
 
 exports.loginUser = async (req: Request, res: Response) => {
@@ -86,7 +81,6 @@ exports.loginUser = async (req: Request, res: Response) => {
     
 const returnedUser = {
   id : user._id,
-  username : user.username,
   email : user.email,
   verified: user.verified,
   profileCompleted:user.profileCompleted
@@ -131,7 +125,6 @@ exports.refreshTokens = async (req: Request, res: Response) => {
     res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
     const returnedUser = {
       id : user._id,
-      username : user.username,
       email : user.email,
       verified: user.verified,
       profileCompleted:user.profileCompleted
@@ -148,3 +141,25 @@ exports.refreshTokens = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+exports.logoutUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.body.id;
+    const user = await User.findOne({ _id:userId });
+    if (!user) {
+      return res.status(401).json({ message: 'No user logged in' });
+    }
+    user.refreshToken = "";
+    await user.save();
+
+    res.clearCookie("refreshToken");
+
+    return res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};

@@ -67,7 +67,6 @@ exports.verifyOtp = async(req: Request, res: Response) => {
     res.cookie('refreshToken', refreshToken, cookieOptions);
 const returnedUser = {
   id : user._id,
-  username : user.username,
   email : user.email,
   verified: user.verified,
   profileCompleted:user.profileCompleted
