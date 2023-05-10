@@ -74,7 +74,8 @@ exports.loginUser = async (req: Request, res: Response) => {
     const cookieOptions:any = {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: 'strict',
+      sameSite: 'none',
+      secure: true,
     };
     res.cookie('refreshToken', refreshToken, cookieOptions);
 
