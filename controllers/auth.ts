@@ -167,20 +167,23 @@ exports.refreshTokens = async (req: Request, res: Response) => {
 
 exports.logoutUser = async (req: Request, res: Response) => {
 	try {
-		const userId = req.body.id;
-		const user = await User.findOne({ _id: userId });
-		if (!user) {
-			return res.status(401).json({ message: "No user logged in" });
+		const token = req.cookies["refreshToken"];
+		if (token) {
+			const userId = decodeToken(token).id;
+			const user = await User.findOne({ _id: userId });
+			if (!user) {
+				return res.status(401).json({ message: "No user logged in" });
+			}
+			user.refreshToken = "";
+			await user.save();
+			res.clearCookie("refreshToken");
+			return res.status(200).json({
+				success: true,
+				message: "User logged out successfully",
+			});
+		} else {
+			return res.status(401).json({ message: "User is not logged in" });
 		}
-		user.refreshToken = "";
-		await user.save();
-
-		res.clearCookie("refreshToken");
-
-		return res.status(200).json({
-			success: true,
-			message: "User logged out successfully",
-		});
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({ message: "Server error" });
