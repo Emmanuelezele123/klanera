@@ -3,7 +3,7 @@ const Otp = require("../models/otp");
 import express, { Application, Request, Response, NextFunction } from "express";
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-const sendEmail = require("../helpers/sendEmail");
+const scheduleEmail = require("../helpers/scheduleEmail");
 require("dotenv").config();
 const expiryDate = process.env.EXPIRY_DATE;
 const {
@@ -47,13 +47,14 @@ exports.registerNewUser = async (req: Request, res: Response) => {
 				otpText: otp,
 			});
 			const result = await newOtp.save();
-			sendEmail(
-				newUser.email,
-				"Otp verification Code for klanera app ",
+			const sendMail = await scheduleEmail(
+				"Otp verification Code for Klanera app ",
 				`Your verification code is ${otp}`,
-				res,
-				"code"
+				newUser.email
 			);
+			if (sendMail.response === "250 Message received") {
+				return res.status(200);
+			}
 		} catch (err: any) {
 			console.error(err);
 			return res.status(500).json({ error: err.message });
