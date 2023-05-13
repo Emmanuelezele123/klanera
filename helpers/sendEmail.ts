@@ -1,38 +1,30 @@
-// using Twilio SendGrid's v3 Node.js Library
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const sendEmail = (email: string, subject: string, text: string, res: any, type: string) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+async function sendEmail(subject: string, text: string, to: string) {
+	const transporter = nodemailer.createTransport({
+		host: "smtp.zoho.com",
+		port: 465,
+		secure: true,
+		auth: {
+			user: process.env.ZOHO_EMAIL,
+			pass: process.env.ZOHO_PASSWORD,
+		},
+	});
 
-  const message = {
-    to: email, // Change to your recipient
-    from: 'emmanuel.ezele@stu.cu.edu.ng', // Change to your verified sender
-    subject: subject,
-    text: text,
-  };
+	try {
+		const info = await transporter.sendMail({
+			from: `Klanera <${process.env.ZOHO_EMAIL}>`,
+			to: to,
+			subject: subject,
+			text: text,
+		});
 
-  sgMail
-    .send(message)
-    .then(() => {
-      if (type === "email") {
-        console.log('Email sent');
-        return res.status(200).json({ status: "Success", message: "password reset link sent to your email account" });
-
-      } else {
-        return res.status(200).json({ status: "Success" });
-      }
-
-    })
-    .catch((error: any) => {
-      if (type === "email") {
-        console.error(error);
-        return res.status(401).json({ status: "Failure", message: "password reset link was not sent" });
-
-      } else {
-       
-    }
-    });
-};
+		return info;
+	} catch (err) {
+		console.error(err);
+		throw new Error("Failed to send email");
+	}
+}
 
 module.exports = sendEmail;

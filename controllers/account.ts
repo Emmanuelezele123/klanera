@@ -1,6 +1,6 @@
 const User = require("../models/user");
 import express, { Application, Request, Response, NextFunction } from "express";
-const scheduleEmail = require("../helpers/scheduleEmail");
+const sendEmail = require("../helpers/sendEmail");
 
 const Otp = require("../models/otp");
 const crypto = require("crypto");
@@ -33,14 +33,13 @@ exports.resendOtp = async (req: Request, res: Response) => {
 			otpText: otp,
 		});
 		const result = await newOtp.save();
-		const sendMail = await scheduleEmail(
+		await sendEmail(
 			"Otp verification Code for Klanera app ",
 			`Your verification code is ${otp}`,
 			req.body.email
 		);
-		if (sendMail.response === "250 Message received") {
-			return res.status(200).json({ message: "otp sent successfully" });
-		}
+
+		return res.status(200).json({ message: "otp sent successfully" });
 	} catch (err: any) {
 		console.error(err);
 		res.status(500).json({ error: err.message });
@@ -114,19 +113,12 @@ exports.resetPassword = async (req: Request, res: Response) => {
 		await foundUser.save();
 
 		// Send a password reset email to the user's email address with a link containing the password reset token
-
 		const link = `${process.env.BASE_URL}/reset-password?token=${passwordResetToken}`;
-		console.log(passwordResetToken);
-		const sendMail = await scheduleEmail(
-			"Change Password",
-			link,
-			foundUser.email
-		);
-		if (sendMail.response === "250 Message received") {
-			return res
-				.status(200)
-				.json({ message: "Password reset email sent successfully" });
-		}
+		await sendEmail("Change Password", link, foundUser.email);
+
+		return res
+			.status(200)
+			.json({ message: "Password reset email sent successfully" });
 	} catch (err) {
 		console.error(err);
 		return res.status(500).json({ message: "Internal server error" });
