@@ -52,9 +52,6 @@ exports.registerNewUser = async (req: Request, res: Response) => {
 				`Your verification code is ${otp}`,
 				newUser.email
 			);
-			if (sendMail.response === "250 Message received") {
-				return res.status(200);
-			}
 		} catch (err: any) {
 			console.error(err);
 			return res.status(500).json({ error: err.message });
