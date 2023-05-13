@@ -20,6 +20,7 @@ app.use(
 );
 app.use("/api/v1/user", authRouter);
 app.use("/api/v1/account", accountRouter);
+
 // Root route of express app
 app.get("/", (req, res) => {
 	res.send("klanera api");

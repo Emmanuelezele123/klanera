@@ -14,6 +14,7 @@ const {
 	decodeToken,
 	generateToken,
 } = require("../helpers/jwtService");
+const { fetchAvatars } = require("../helpers/cloudinary");
 
 exports.resendOtp = async (req: Request, res: Response) => {
 	try {
@@ -152,6 +153,16 @@ exports.changePassword = async (req: Request, res: Response) => {
 		await foundUser.save();
 
 		return res.status(200).json({ message: "Password changed successfully" });
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+exports.getAvatars = async (req: Request, res: Response) => {
+	try {
+		const avatars = await fetchAvatars();
+		return res.status(200).json({ avatars });
 	} catch (err) {
 		console.error(err);
 		return res.status(500).json({ message: "Internal server error" });
