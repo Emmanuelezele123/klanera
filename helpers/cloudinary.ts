@@ -56,3 +56,30 @@ exports.fetchAvatars = async () => {
 		throw error;
 	}
 };
+
+exports.fetchGameIcons = async () => {
+	try {
+		const { resources } = await cloudinary.api.resources({
+			type: "upload",
+			prefix: "",
+			max_results: 100,
+		});
+
+		const gameIconsObject: any = {
+			gameIcons: [],
+		};
+
+		resources.forEach((resource: any) => {
+			const folder = resource.folder || "";
+			if (folder === "gameIcons") {
+				const { asset_id, public_id, secure_url } = resource;
+				gameIconsObject[folder].push({ asset_id, public_id, secure_url });
+			}
+		});
+
+		return convertSnakeCaseToCamelCase(gameIconsObject);
+	} catch (error) {
+		console.error("Error fetching images:", error);
+		throw error;
+	}
+};

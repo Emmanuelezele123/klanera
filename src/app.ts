@@ -4,8 +4,10 @@ const cookieParser = require("cookie-parser");
 import connectDB from "../config/db";
 const authRouter = require("../routes/auth");
 const accountRouter = require("../routes/account");
+const gameRouter = require("../routes/game");
 const User = require("../models/user");
 const app: Application = express();
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -20,6 +22,7 @@ app.use(
 );
 app.use("/api/v1/user", authRouter);
 app.use("/api/v1/account", accountRouter);
+app.use("/api/v1/game", gameRouter);
 
 // Root route of express app
 app.get("/", (req, res) => {
