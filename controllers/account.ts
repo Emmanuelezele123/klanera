@@ -33,7 +33,7 @@ exports.resendOtp = async (req: Request, res: Response) => {
 			otpText: otp,
 		});
 		const result = await newOtp.save();
-		await sendEmail(
+		sendEmail(
 			"Otp verification Code for Klanera app ",
 			`Your verification code is ${otp}`,
 			req.body.email
@@ -114,7 +114,7 @@ exports.resetPassword = async (req: Request, res: Response) => {
 
 		// Send a password reset email to the user's email address with a link containing the password reset token
 		const link = `${process.env.BASE_URL}/reset-password?token=${passwordResetToken}`;
-		await sendEmail("Change Password", link, foundUser.email);
+		sendEmail("Change Password", link, foundUser.email);
 
 		return res
 			.status(200)

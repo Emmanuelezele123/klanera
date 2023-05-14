@@ -47,7 +47,7 @@ exports.registerNewUser = async (req: Request, res: Response) => {
 				otpText: otp,
 			});
 			const result = await newOtp.save();
-			await sendEmail(
+			sendEmail(
 				"Otp verification Code for Klanera app ",
 				`Your verification code is ${otp}`,
 				newUser.email
