@@ -8,6 +8,24 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+function convertSnakeCaseToCamelCase(obj: any): any {
+	if (Array.isArray(obj)) {
+		return obj.map((item) => convertSnakeCaseToCamelCase(item));
+	} else if (typeof obj === "object" && obj !== null) {
+		const camelCaseObj: any = {};
+		for (const key in obj) {
+			if (Object.prototype.hasOwnProperty.call(obj, key)) {
+				const camelCaseKey = key.replace(/_([a-z])/g, (_, char) =>
+					char.toUpperCase()
+				);
+				camelCaseObj[camelCaseKey] = convertSnakeCaseToCamelCase(obj[key]);
+			}
+		}
+		return camelCaseObj;
+	}
+	return obj;
+}
+
 // Function to fetch avatars
 exports.fetchAvatars = async () => {
 	try {
@@ -18,24 +36,21 @@ exports.fetchAvatars = async () => {
 		});
 
 		const foldersObject: any = {
-			"Klanera Female Avatar": [],
-			"Klanera Male Avatar": [],
+			klaneraFemaleAvatar: [],
+			klaneraMaleAvatar: [],
 		};
 
 		// Organize images by folders
 		resources.forEach((resource: any) => {
 			const folder = resource.folder || "";
 
-			if (
-				folder === "Klanera Female Avatar" ||
-				folder === "Klanera Male Avatar"
-			) {
+			if (folder === "klaneraFemaleAvatar" || folder === "klaneraMaleAvatar") {
 				const { asset_id, public_id, secure_url } = resource;
 				foldersObject[folder].push({ asset_id, public_id, secure_url });
 			}
 		});
 
-		return foldersObject;
+		return convertSnakeCaseToCamelCase(foldersObject);
 	} catch (error) {
 		console.error("Error fetching images:", error);
 		throw error;
