@@ -1,12 +1,12 @@
-const User = require("../models/user");
 import express, { Application, Request, Response, NextFunction } from "express";
-const sendEmail = require("../helpers/sendEmail");
-
-const Otp = require("../models/otp");
+require("dotenv").config();
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-require("dotenv").config();
-const expiryDate = process.env.EXPIRY_DATE;
+
+const User = require("../models/user");
+const Otp = require("../models/otp");
+const UserSurvey = require("../models/userSurvey");
+
 const {
 	createToken,
 	createAccessToken,
@@ -15,6 +15,121 @@ const {
 	generateToken,
 } = require("../helpers/jwtService");
 const { fetchAvatars } = require("../helpers/cloudinary");
+const sendEmail = require("../helpers/sendEmail");
+const { fetchBanks, createTransferRecipient } = require("../helpers/paystack");
+
+const expiryDate = process.env.EXPIRY_DATE;
+
+exports.completeUserProfile = async (req: Request, res: Response) => {
+	try {
+		const {
+			id,
+			firstName,
+			lastName,
+			phoneNumber,
+			state,
+			bankName,
+			bankCode,
+			accountNumber,
+			accountName,
+			recipientCode,
+			dateOfBirth,
+			gamesOfInterest,
+			dailyGamingHours,
+			earningFromGaming,
+			howDidYouHearAboutUs,
+			onlineOrOfflineGaming,
+			bestGamingConsole,
+		} = req.body;
+
+		const user = await User.findOne({ _id: id });
+
+		if (!user) {
+			return res.status(404).json({ message: "user not found" });
+		}
+
+		if (!user.verified) {
+			return res.status(400).json({ message: "user not verified" });
+		}
+
+		if (user.profileCompleted) {
+			return res
+				.status(400)
+				.json({ message: "user profile already completed" });
+		}
+
+		// Check for missing required fields
+		if (
+			!firstName ||
+			!lastName ||
+			!phoneNumber ||
+			!state ||
+			!bankName ||
+			!bankCode ||
+			!accountNumber ||
+			!accountName ||
+			!recipientCode ||
+			!dateOfBirth
+		) {
+			return res.status(400).json({ message: "Missing required fields" });
+		}
+
+		user.firstName = firstName;
+		user.lastName = lastName;
+		user.phoneNumber = phoneNumber;
+		user.state = state;
+		user.dateOfBirth = dateOfBirth;
+
+		user.bankDetails = {
+			bankName,
+			bankCode,
+			accountNumber,
+			accountName,
+			recipientCode,
+		};
+
+		const userSurvey = await UserSurvey.findOne({ userId: id });
+		if (!userSurvey) {
+			const newUserSurvey = new UserSurvey({
+				userId: id,
+				gamesOfInterest,
+				dailyGamingHours,
+				earningFromGaming,
+				howDidYouHearAboutUs,
+				onlineOrOfflineGaming,
+				bestGamingConsole,
+			});
+
+			await newUserSurvey.save();
+		}
+
+		const accessToken = createAccessToken(user);
+		const refreshToken = createRefreshToken(user);
+
+		user.refreshToken = refreshToken;
+		user.profileCompleted = true;
+		const savedUser = await user.save();
+
+		const cookieOptions: any = {
+			httpOnly: true,
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+			sameSite: "none",
+			secure: true,
+		};
+
+		res.cookie("refreshToken", refreshToken, cookieOptions);
+
+		return res.status(200).json({
+			message: "user profile completed successfully",
+			accessToken,
+			refreshToken,
+			user: savedUser,
+		});
+	} catch (err: any) {
+		console.error(err);
+		res.status(500).json({ error: err.message });
+	}
+};
 
 exports.resendOtp = async (req: Request, res: Response) => {
 	try {
@@ -99,6 +214,7 @@ exports.verifyOtp = async (req: Request, res: Response) => {
 		return res.json({ Error: err.message });
 	}
 };
+
 exports.resetPassword = async (req: Request, res: Response) => {
 	try {
 		const foundUser = await User.findOne({ email: req.body.email });
@@ -124,6 +240,7 @@ exports.resetPassword = async (req: Request, res: Response) => {
 		return res.status(500).json({ message: "Internal server error" });
 	}
 };
+
 exports.changePassword = async (req: Request, res: Response) => {
 	try {
 		// Find the user with the password reset token
@@ -160,3 +277,26 @@ exports.getAvatars = async (req: Request, res: Response) => {
 		return res.status(500).json({ message: "Internal server error" });
 	}
 };
+
+exports.getBanks = async (req: Request, res: Response) => {
+	try {
+		const banks = await fetchBanks();
+		return res.status(200).json({ banks });
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+exports.createRecipient = async (req: Request, res: Response) => {
+	try {
+		const { _id, accountNumber, bankCode } = req.body;
+		const recipient = await createTransferRecipient(accountNumber, bankCode);
+
+		return res.status(200).json(recipient.data);
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+6;

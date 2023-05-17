@@ -6,6 +6,14 @@ var validateEmail = function (email: any) {
 };
 const userSchema = new Schema(
 	{
+		firstName: {
+			type: String,
+			trim: true,
+		},
+		lastName: {
+			type: String,
+			trim: true,
+		},
 		email: {
 			type: String,
 			trim: true,
@@ -20,6 +28,42 @@ const userSchema = new Schema(
 		},
 		username: {
 			type: String,
+		},
+		phoneNumber: {
+			type: String,
+			trim: true,
+		},
+		state: {
+			type: String,
+			trim: true,
+		},
+
+		bankDetails: {
+			bankName: {
+				type: String,
+				trim: true,
+			},
+			bankCode: {
+				type: String,
+				trim: true,
+			},
+			accountNumber: {
+				type: String,
+				trim: true,
+			},
+			accountName: {
+				type: String,
+				trim: true,
+			},
+			recipientCode: {
+				type: String,
+				trim: true,
+			},
+		},
+
+		dateOfBirth: {
+			type: String,
+			trim: true,
 		},
 
 		password: {
