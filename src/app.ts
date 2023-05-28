@@ -14,7 +14,7 @@ app.use(
 	cors({
 		credentials: true,
 		origin: [
-			"https://klanera.vercel.app",
+			"https://klaneradev.vercel.app/",
 			"http://localhost:3000",
 			"http://localhost:3001",
 		],

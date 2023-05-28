@@ -26,6 +26,14 @@ const userSchema = new Schema(
 				"Please fill a valid email address",
 			],
 		},
+		profilePicture: {
+			type: String,
+			trim: true,
+		},
+		klaneraPointsBalance: {
+			type: Number,
+			default: 0,
+		},
 		username: {
 			type: String,
 		},
