@@ -14,7 +14,7 @@ exports.fetchBanks = async () => {
 			}
 		);
 
-		return response.data;
+		return response.data.data;
 	} catch (error) {
 		console.error("Error fetching banks:", error);
 		throw error;

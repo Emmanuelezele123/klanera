@@ -283,7 +283,7 @@ exports.changePassword = async (req: Request, res: Response) => {
 exports.getAvatars = async (req: Request, res: Response) => {
 	try {
 		const avatars = await fetchAvatars();
-		return res.status(200).json({ avatars });
+		return res.status(200).json(avatars);
 	} catch (err) {
 		console.error(err);
 		return res.status(500).json({ message: "Internal server error" });
@@ -293,7 +293,7 @@ exports.getAvatars = async (req: Request, res: Response) => {
 exports.getBanks = async (req: Request, res: Response) => {
 	try {
 		const banks = await fetchBanks();
-		return res.status(200).json({ banks });
+		return res.status(200).json(banks);
 	} catch (err) {
 		console.error(err);
 		return res.status(500).json({ message: "Internal server error" });
