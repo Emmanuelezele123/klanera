@@ -113,6 +113,14 @@ exports.completeUserProfile = async (req: Request, res: Response) => {
 		user.profileCompleted = true;
 		const savedUser = await user.save();
 
+		const returnedUser = {
+			id: savedUser._id,
+			email: savedUser.email,
+			profilePic: savedUser.profilePic,
+			verified: savedUser.verified,
+			profileCompleted: savedUser.profileCompleted,
+		};
+
 		const cookieOptions: any = {
 			httpOnly: true,
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
@@ -124,9 +132,9 @@ exports.completeUserProfile = async (req: Request, res: Response) => {
 
 		return res.status(200).json({
 			message: "user profile completed successfully",
+			returnedUser,
 			accessToken,
 			refreshToken,
-			user: savedUser,
 		});
 	} catch (err: any) {
 		console.error(err);
@@ -199,6 +207,7 @@ exports.verifyOtp = async (req: Request, res: Response) => {
 			const returnedUser = {
 				id: user._id,
 				email: user.email,
+				profilePic: user.profilePic,
 				verified: user.verified,
 				profileCompleted: user.profileCompleted,
 			};

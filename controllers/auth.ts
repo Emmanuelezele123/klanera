@@ -96,6 +96,7 @@ exports.loginUser = async (req: Request, res: Response) => {
 		const returnedUser = {
 			id: user._id,
 			email: user.email,
+			profilePic: user.profilePic,
 			verified: user.verified,
 			profileCompleted: user.profileCompleted,
 		};
@@ -147,6 +148,7 @@ exports.refreshTokens = async (req: Request, res: Response) => {
 		const returnedUser = {
 			id: user._id,
 			email: user.email,
+			profilePic: user.profilePic,
 			verified: user.verified,
 			profileCompleted: user.profileCompleted,
 		};
