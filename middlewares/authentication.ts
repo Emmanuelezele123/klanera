@@ -28,7 +28,7 @@ exports.authenticateUser = (
 	if (!decodedToken) {
 		return res
 			.status(401)
-			.json({ message: "You are not logged in to access this route" });
+			.json({ message: "You are not authorized to access this route" });
 	} else {
 		// allow user to continue with the request
 		req.individualUsers = decodedToken;
