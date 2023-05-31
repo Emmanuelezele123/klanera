@@ -26,13 +26,13 @@ const userSchema = new Schema(
 				"Please fill a valid email address",
 			],
 		},
-		profilePicture: {
+		profilePic: {
 			type: String,
 			trim: true,
 		},
 		klaneraPointsBalance: {
 			type: Number,
-			default: 0,
+			default: 100,
 		},
 		username: {
 			type: String,

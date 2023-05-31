@@ -27,6 +27,7 @@ exports.completeUserProfile = async (req: Request, res: Response) => {
 			firstName,
 			lastName,
 			phoneNumber,
+			profilePic,
 			state,
 			bankName,
 			bankCode,
@@ -63,6 +64,7 @@ exports.completeUserProfile = async (req: Request, res: Response) => {
 			!firstName ||
 			!lastName ||
 			!phoneNumber ||
+			!profilePic ||
 			!state ||
 			!bankName ||
 			!bankCode ||
@@ -77,6 +79,7 @@ exports.completeUserProfile = async (req: Request, res: Response) => {
 		user.firstName = firstName;
 		user.lastName = lastName;
 		user.phoneNumber = phoneNumber;
+		user.profilePic = profilePic;
 		user.state = state;
 		user.dateOfBirth = dateOfBirth;
 
