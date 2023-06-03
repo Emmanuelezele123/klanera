@@ -20,10 +20,14 @@ const { fetchBanks, createTransferRecipient } = require("../helpers/paystack");
 
 const expiryDate = process.env.EXPIRY_DATE;
 
-exports.completeUserProfile = async (req: Request, res: Response) => {
+interface AuthRequest extends Request {
+	individualUsers: any;
+}
+
+exports.completeUserProfile = async (req: AuthRequest, res: Response) => {
 	try {
+		const { id } = req.individualUsers;
 		const {
-			id,
 			firstName,
 			lastName,
 			phoneNumber,
@@ -302,7 +306,7 @@ exports.getBanks = async (req: Request, res: Response) => {
 
 exports.createRecipient = async (req: Request, res: Response) => {
 	try {
-		const { _id, accountNumber, bankCode } = req.body;
+		const { accountNumber, bankCode } = req.body;
 		const recipient = await createTransferRecipient(accountNumber, bankCode);
 
 		return res.status(200).json(recipient.data);
@@ -311,4 +315,3 @@ exports.createRecipient = async (req: Request, res: Response) => {
 		return res.status(500).json({ message: "Internal server error" });
 	}
 };
-6;
