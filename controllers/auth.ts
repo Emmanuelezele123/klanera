@@ -82,6 +82,29 @@ exports.loginUser = async (req: Request, res: Response) => {
 		const accessToken = createAccessToken(user);
 		const refreshToken = createRefreshToken(user);
 
+		if (!user.verified) {
+			try {
+				const otp = Math.floor(1000 + Math.random() * 9000).toString();
+				const newOtp = new Otp({
+					userId: user._id,
+					otpText: otp,
+				});
+				const result = await newOtp.save();
+				sendEmail(
+					"Otp verification Code for Klanera app ",
+					`Your verification code is ${otp}`,
+					user.email
+				);
+
+				return res
+					.status(401)
+					.json({ message: "Please verify your email address" });
+			} catch (err: any) {
+				console.error(err);
+				return res.status(500).json({ error: err.message });
+			}
+		}
+
 		user.refreshToken = refreshToken;
 		await user.save();
 
