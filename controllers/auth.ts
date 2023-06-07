@@ -96,9 +96,19 @@ exports.loginUser = async (req: Request, res: Response) => {
 					user.email
 				);
 
-				return res
-					.status(401)
-					.json({ message: "Please verify your email address" });
+				const returnedUser = {
+					id: user._id,
+					email: user.email,
+					profilePic: user.profilePic,
+					verified: user.verified,
+					profileCompleted: user.profileCompleted,
+				};
+
+				return res.status(401).json({
+					success: true,
+					message: "Please verify your email address",
+					returnedUser,
+				});
 			} catch (err: any) {
 				console.error(err);
 				return res.status(500).json({ error: err.message });
