@@ -22,7 +22,7 @@ app.use(
 );
 app.use("/api/v1/user", authRouter);
 app.use("/api/v1/account", accountRouter);
-app.use("/api/v1/game", gameRouter);
+app.use("/api/v1/games", gameRouter);
 
 // Root route of express app
 app.get("/", (req, res) => {
