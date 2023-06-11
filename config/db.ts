@@ -1,7 +1,7 @@
 import mongoose, { ConnectOptions } from "mongoose";
 import { config } from "dotenv";
 import { Application } from "express";
-import { Socket } from "socket.io";
+const { socketHandler } = require("../controllers/chatSocket");
 const socket = require("socket.io");
 
 config();
@@ -26,12 +26,7 @@ const connectDB = (app: Application) => {
 					credentials: true,
 				},
 			});
-
-			io.on("connection", () => {
-				console.log("A user connected");
-			});
-
-			require("../config/socket")(io);
+			socketHandler(io);
 		})
 		.catch((err: Error) => {
 			console.log(err.message);

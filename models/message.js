@@ -15,6 +15,7 @@ const messageSchema = new Schema({
 		type: Date,
 		default: Date.now,
 	},
+	createdAt: { type: Date, expires: "30m", default: Date.now }, // TTL index for 10 minutes
 });
 
 module.exports = mongoose.model("message", messageSchema);
