@@ -8,21 +8,10 @@ Accountrouter.post("/resendOtp", AccountController.resendOtp);
 Accountrouter.post("/verifyOtp", AccountController.verifyOtp);
 Accountrouter.post("/passwordReset", AccountController.resetPassword);
 Accountrouter.post("/passwordReset/:token", AccountController.changePassword);
-Accountrouter.get(
-	"/avatars",
-	authMiddleware.authenticateUser,
-	AccountController.getAvatars
-);
-Accountrouter.get(
-	"/banks",
-	authMiddleware.authenticateUser,
-	AccountController.getBanks
-);
-Accountrouter.post(
-	"/completeProfile",
-	authMiddleware.authenticateUser,
-	AccountController.completeUserProfile
-);
 Accountrouter.post("/recipient", AccountController.createRecipient);
+Accountrouter.use(authMiddleware.authenticateUser);
+Accountrouter.get("/avatars", AccountController.getAvatars);
+Accountrouter.get("/banks", AccountController.getBanks);
+Accountrouter.post("/completeProfile", AccountController.completeUserProfile);
 
 module.exports = Accountrouter;
