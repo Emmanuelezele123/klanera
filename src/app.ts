@@ -6,7 +6,6 @@ const authRouter = require("../routes/auth");
 const accountRouter = require("../routes/account");
 const gameRouter = require("../routes/game");
 const chatRouter = require("../routes/chat");
-const User = require("../models/user");
 const app: Application = express();
 
 app.use(express.json());
