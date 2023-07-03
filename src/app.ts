@@ -15,6 +15,7 @@ app.use(
 		credentials: true,
 		origin: [
 			"https://klaneradev.vercel.app",
+			"https://master.d16qp6rii4638j.amplifyapp.com",
 			"http://localhost:3000",
 			"http://localhost:3001",
 		],
